@@ -1,3 +1,3 @@
 $(window).load(function(){
-petObj=new pets();
+petObj=new Pets();
 });
