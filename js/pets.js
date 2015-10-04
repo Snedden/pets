@@ -8,7 +8,9 @@ function Pets(){
 	var animal;  //animalInput 
 	var breed;    //breed input 
 	var age;      //age input
+	var gender;
 	
+	var descBoxHeight;
 	function construct(){
 		init();
 	}//End of construct()
@@ -26,9 +28,13 @@ function Pets(){
 	breeds=[];
 	setAnimalListener();
 	
+	descBoxHeight=descBoxHeight;
+	
 	//getData();
 	}
 	
+	
+
 	function setAnimalListener(){
 	animal=document.getElementById("animals");
 	document.getElementById("animals").addEventListener("change",function(){getData(animal),setBreedListener(animal)});
@@ -51,12 +57,24 @@ function Pets(){
 				
 				
 				//console.log(breedSelect==null);
+															//remove breed on animal change to reset
+					
+				
 				if(document.getElementById("breed")==null){   //check if breed selct already exist else create breed select input
-					//console.log('breedSelect called');
+					
 					createBreedSelect();
 				}
-				bindData(bindTo);
+				else{            							  //If exist remove the existing breed input and create new one
+				removeElement(breed);
+				removeElement(age);
+				removeElement(gender);
+				createBreedSelect();
+				console.log("breed select created");
+				
+				}
 				breed=document.getElementById("breed");
+				bindData(bindTo);
+				
 				breed.addEventListener("input",function(){getData(animal,breed),setAgeListener(animal,breed);});
 				
 				},
@@ -67,23 +85,42 @@ function Pets(){
 		});
 	}
 	
+	function removeElement(ele){
+	console.log(ele);
+		if(ele!=undefined){  				//If element exist
+			ele.parentNode.removeChild(ele);
+			
+		}
+		
+	}
 	function setAgeListener(animal,breed){
 	
 		if(document.getElementById('age')==null){
 			createAgeSelect();
-			console.log('age select created');
-			age=document.getElementById('age');
-			age.addEventListener("change",function(){getData(animal,breed,age);setGenderListener(animal,breed,age)});
 		}
+		else{
+		removeElement(age);
+		removeElement(gender);
+		createAgeSelect();
+		}
+		
+		console.log('age select created');
+		age=document.getElementById('age');
+		age.addEventListener("change",function(){getData(animal,breed,age);setGenderListener(animal,breed,age)});
 	}
 	
 	function setGenderListener(animal,breed,age){
 		if(document.getElementById('gender')==null){
 			createGenderSelect();
 			console.log('gender select created');
-			gender=document.getElementById('gender');
-			gender.addEventListener("change",function(){getData(animal,breed,age,gender);});
+			
 		}
+		else{
+		removeElement(gender);
+		createGenderSelect();
+		}
+		gender=document.getElementById('gender');
+		gender.addEventListener("change",function(){getData(animal,breed,age,gender);});
 	}
 	
 	function createGenderSelect(){
@@ -136,14 +173,14 @@ function Pets(){
 	
 	function createBreedSelect(){
 	
-	var breedSelect;     //Breed select input box
+	var breedSelect; 
 	var breedData; 		 //Breed datalist tag
 	
 	breedSelect = document.createElement("input");
 	breedSelect.setAttribute("placeholder", "Any"); 
 	breedSelect.setAttribute("id", "breed"); 
 	breedSelect.setAttribute("list", "breeds"); 
-	form.appendChild( breedSelect);
+	form.appendChild(breedSelect);
 	
 	          
 	breedData = document.createElement("datalist");
@@ -154,6 +191,7 @@ function Pets(){
 	}
 	
 	function getData(animal,breed,age,gender){
+	//clearBigImage();  //clears big image on every get data call;
 	var animalValue="",breedValue="",ageValue="",genderValue="",location=14623;
 	var URL='http://api.petfinder.com/pet.find?key='+apiKey+'&count=20&format=json&location='+location;  //basse URL
 	
@@ -270,11 +308,56 @@ function Pets(){
 			console.log("is data"+baseData[i].media.photos);
 			if(baseData[i].media.photos)
 			{
-			images+='<a href=""><img src="'+baseData[i].media.photos.photo[2].$t+'"width:"160" height:"160">';
+			images+='<img src="'+baseData[i].media.photos.photo[2].$t+'"style="width:150px" alt="'+baseData[i].description+'" class="thumb" >';
 			}
 		}	
-	$('#imageList').append(images)
+	$('#imageList').append(images);
+	
+	console.log(document.getElementById("imageList").childNodes);
+	var imagesLength=document.getElementById("imageList").childNodes.length;
+	for(var i=0;i<imagesLength;i++){
+		document.getElementById("imageList").childNodes[i].addEventListener('click',function(){fillBigImage(this)});
+		}
 	}
+
+    function fillBigImage(thumb){
+		console.log('thumb clicked');
+		console.log(thumb.alt);
+		document.images[0].src=thumb.src;
+																			
+		var descNode = document.getElementById("desc");
+		var petDesc = document.createElement("p");
+		var petDescText = document.createTextNode(thumb.alt);
+		
+		
+			while (descNode.firstChild) {
+				descNode.removeChild(descNode.firstChild);
+			}
+																		
+																			
+		petDesc.appendChild(petDescText);
+		descNode.appendChild(petDesc);
+		
+		descNode.addEventListener("mouseover",function(){   //capture MouseOver event
+	
+			enlargeDesc(this);  
+		});	
+
+	}	
+	
+	function enlargeDesc(descBox){
+	var descHeight=descBox.style.height;
+	descBox.style.height='auto';
+	
+	
+	var repeater=setTimeout(enlargeDesc,40,descBox);
+	
+		descBox.addEventListener("mouseout",function(){   //clear timeOut counter on mouseOut event on the box
+				clearTimeout(repeater);
+				descBox.style.height='100px';
+				});
+	}			
+		
 	
 	
 	function bindData(bindTo){
@@ -294,6 +377,21 @@ function Pets(){
 	console.log("invalid bindTo parameter");
 	}
 	
+	}
+	
+	function clearBigImage(){
+		var bigImageDiv=document.getElementById("bigImgContainer");
+		while(bigImageDiv.firstChild){
+		if(bigImageDiv.firstChild.tagName!='DIV')
+		bigImageDiv.removeChild(bigImageDiv.firstChild)
+		}	   
+	
+	}
+	
+	
+	function changeBigImage(imageSource){
+		document.images[0].src=imageSource;
+		
 	}
 	
 	////////////////////////////////////////////////

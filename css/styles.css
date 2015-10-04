@@ -1,3 +1,37 @@
 body{
 background:url('../images/retina_wood.png');
+font-family: verdana, helvetica, arial, sans-serif;
+margin-left:0;
+margin-right:0;
 }
+
+ #big-pic {
+	border:1px solid white;
+	box-shadow: 2px 2px 5px 1px gray;
+	height: 332px;
+	width:auto;
+	margin:0 auto;
+	display:block;
+		
+    }
+    
+    #imageList{
+	border:1px solid white;
+	box-shadow:2px 2px 5px 1px gray;
+	height: 250px;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	padding:5px;
+	white-space: nowrap;
+	width:auto;
+    }
+	
+	#desc{
+	height:100px;
+	overFlow:hidden;
+	min-height:100px;
+	}
+    
+    .thumb {
+	cursor: pointer;
+    }

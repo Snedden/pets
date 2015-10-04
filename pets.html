@@ -7,6 +7,7 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	</head>
 	<body >
 	<form id='petForm'>
@@ -22,15 +23,22 @@
 			<option>smallfurry</option>
 		</select>
 		
-		<!--<input id='breed' list='breeds'>
-			<datalist id='breeds'>
-			</datalist>-->
+		
 		
 		
 		
 	</form>
-	<div id ="imageList">
+	
+	<div id="bigImgContainer" >
+			<img  alt="pets!" onclick="doit(this)" id="big-pic" >
+			<div id="desc" >
+			</div>	
 	</div>
+  
+  <!--Thumbnail Strip-->
+	<div id="imageList">
+	</div>
+	
 		
 	<!--External Javascript files-->
 	<script type="text/javascript" src="js/global.js"></script>
