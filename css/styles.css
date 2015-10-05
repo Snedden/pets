@@ -18,9 +18,10 @@ margin-right:0;
     #imageList{
 	border:1px solid white;
 	box-shadow:2px 2px 5px 1px gray;
-	height: 250px;
-	overflow-x: scroll;
-	overflow-y: hidden;
+	height: auto;
+	position:relative;
+	left:0;
+	display:inline-block;
 	padding:5px;
 	white-space: nowrap;
 	width:auto;

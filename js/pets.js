@@ -8,7 +8,15 @@ function Pets(){
 	var animal;  //animalInput 
 	var breed;    //breed input 
 	var age;      //age input
-	var gender;
+	var gender;   //gender input
+	var maxPets  //max Number of pets returned in an single api call 
+	
+	var imageListWidth; 		//Width of imageList div
+	var screenWidth;            //Width of screen  
+	
+	var slideDirection;        //Slide direction of the images 
+	var slideSpeed;
+	
 	
 	var descBoxHeight;
 	function construct(){
@@ -23,6 +31,10 @@ function Pets(){
 	apiKey='f789d56f7c27076c0cc20478a6cc1a51';
 	apiSecret='80b43503a72be11d8ca49341f152761c';
 	form=document.getElementById("petForm");
+	maxPets=50;
+	
+	screenWidth=screen.width;
+	imageListWidth=0;   //no images yet
 	
 	baseData=[];
 	breeds=[];
@@ -30,7 +42,7 @@ function Pets(){
 	
 	descBoxHeight=descBoxHeight;
 	
-	//getData();
+
 	}
 	
 	
@@ -232,7 +244,7 @@ function Pets(){
 		
 	
 
-	var URL='http://api.petfinder.com/pet.find?key='+apiKey+'&count=20&format=json&breed='+breedValue+'&animal='+animalValue+'&age='+ageValue+'&sex='+genderValue+'&location='+location;
+	var URL='http://api.petfinder.com/pet.find?key='+apiKey+'&count='+maxPets+'&format=json&breed='+breedValue+'&animal='+animalValue+'&age='+ageValue+'&sex='+genderValue+'&location='+location;
 	$.ajax({                    															//Asyn ajax to API
 			type: 'get',
 			url:  URL,
@@ -293,34 +305,133 @@ function Pets(){
 	
 	function loadImages(){
 	
+	imageListWidth=0;   //re initiliazzing every time new images are loaded
 	document.getElementById("imageList").innerHTML = "";
 	console.log('images cleared');
-	
+	var secondRow=false;
 	
 	
 	
 	
 	var length=baseData.length;
-	var images='';
+	
 	var imgSrc;
+	var imageList=document.getElementById('imageList');
 	console.log(baseData);
 		for(var i=0;i<length;i++){
 			console.log("is data"+baseData[i].media.photos);
 			if(baseData[i].media.photos)
 			{
-			images+='<img src="'+baseData[i].media.photos.photo[2].$t+'"style="width:150px" alt="'+baseData[i].description+'" class="thumb" >';
+			
+			var imageThumb=document.createElement("img");
+			imageThumb.setAttribute("class", "thumb");
+			imageThumb.setAttribute("style", "width:150px;display:inline-block;vertical-align:top;");
+			imageThumb.setAttribute("alt", baseData[i].description);
+			imageThumb.setAttribute("src", baseData[i].media.photos.photo[2].$t);
+			
+			imageList.appendChild(imageThumb);
+			if(!secondRow){
+			imageListWidth=imageListWidth+ parseInt(imageThumb.style.width); //append to imageLIst width as images are added to the div 
+			}
+				if((i+1)===length/2){
+			    secondRow=true;
+				imageList.appendChild(document.createElement("br")); //break line when half the images are added to create two rows
+				
+				}
+			
+		
 			}
 		}	
-	$('#imageList').append(images);
+	console.log(imageListWidth)	;
+	imageList.addEventListener('mouseover',function(){slideImages(event);});  //to make the images slide on mouse over
+												
+	
 	
 	console.log(document.getElementById("imageList").childNodes);
 	var imagesLength=document.getElementById("imageList").childNodes.length;
 	for(var i=0;i<imagesLength;i++){
-		document.getElementById("imageList").childNodes[i].addEventListener('click',function(){fillBigImage(this)});
+		document.getElementById("imageList").childNodes[i].addEventListener('click',function(){openDialogBox(this);});
 		}
 	}
 
-    function fillBigImage(thumb){
+	function slideImages(mouseEvent){   //@mouseEvent if event is fire by mouseMove instead of set time out
+	
+	
+	
+	var imgLeft=parseInt(getComputedStyle(imageList).getPropertyValue("left"));
+	var bufferEnd=30;  //to show the images have ended
+	
+	
+	
+	if(mouseEvent){
+		if(mouseEvent.clientX>(screenWidth/2)){  //mouse on the right side of the screen
+		slideDirection="left";
+		slideSpeed=(mouseEvent.clientX-(screenWidth/2))*0.023;
+		}
+		else
+		{
+		slideDirection="right";
+		slideSpeed=((screenWidth/2)-mouseEvent.clientX)*0.023;  
+		}
+	}
+	
+	   if(slideDirection==="left"){ //slide Left
+	   console.log(imgLeft+">("+screenWidth+"-"+imageListWidth+")-"+bufferEnd);
+			if(imgLeft>(screenWidth-imageListWidth)-bufferEnd){  //to stop the slide when last image is slided
+			imgLeft=imgLeft-slideSpeed;
+			}
+		}	
+	   if(slideDirection==="right"){//slide right
+			if(imgLeft<0){
+			imgLeft=imgLeft+slideSpeed;
+			}
+	   }
+		document.getElementById("imageList").style.left=imgLeft+'px';
+		
+		
+		
+		
+		var repeater=setTimeout(slideImages,40);
+		
+			document.getElementById("imageList").addEventListener("mouseout",function(){   //clear timeOut counter on mouseOut event on the box
+					//petImages.style.left=imgLeft+'px';
+					clearTimeout(repeater);
+					
+					
+					});
+					
+	
+	}
+	
+	function openDialogBox(thumb){
+	
+	
+	dialogBox=document.getElementById("petDialog"); 
+	dialogBox.showModal();
+	
+	document.getElementById("big-pic").src=thumb.src;
+	
+	var descNode = document.getElementById("desc");
+	var petDesc = document.createElement("p");
+	var petDescText = document.createTextNode(thumb.alt);
+		
+		
+		while (descNode.firstChild) {
+				descNode.removeChild(descNode.firstChild);
+		}
+																		
+																			
+		petDesc.appendChild(petDescText);
+		descNode.appendChild(petDesc);
+		
+		descNode.addEventListener("mouseover",function(){   //capture MouseOver event
+	
+			enlargeDesc(this);  
+		});
+	}
+   //Fills and image not dialog box
+/*
+   function fillBigImage(thumb){
 		console.log('thumb clicked');
 		console.log(thumb.alt);
 		document.images[0].src=thumb.src;
@@ -344,7 +455,7 @@ function Pets(){
 		});	
 
 	}	
-	
+	*/
 	function enlargeDesc(descBox){
 	var descHeight=descBox.style.height;
 	descBox.style.height='auto';
