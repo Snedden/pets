@@ -1,4 +1,5 @@
 function Pets(){
+    
 	var apiKey;   //apiKEy
 	var baseData; //data after formatted in js object/array literal 
 	var apiSecret;//Api secret for security reasons
@@ -15,7 +16,16 @@ function Pets(){
 	var screenWidth;            //Width of screen  
 	
 	var slideDirection;        //Slide direction of the images 
-	var slideSpeed;
+	var slideSpeed;            //Speed of the slide
+	
+	var mouseX;                //Position of mouse X
+	
+	//Local storage variable
+	var animalLocal;
+	var breedLocal;
+	var ageLocal;
+	var genderLocal;
+	
 	
 	
 	var descBoxHeight;
@@ -28,6 +38,7 @@ function Pets(){
 	purpose:Initilize properties  including the apiKey required for API request 
 	*/
 	function init(){
+	
 	apiKey='f789d56f7c27076c0cc20478a6cc1a51';
 	apiSecret='80b43503a72be11d8ca49341f152761c';
 	form=document.getElementById("petForm");
@@ -38,34 +49,166 @@ function Pets(){
 	
 	baseData=[];
 	breeds=[];
-	setAnimalListener();
+	animal=createSelect("animals",['Please select animal','barnyard','bird','cat','dog','horse','pig','reptile','smallfurry']);
+	setListener(animal,'change');
+	
+	
+	//setAnimalListener();
 	
 	descBoxHeight=descBoxHeight;
 	
+	
+	/* if(window.localStorage){
+		if(localStorage.getItem('animal')){
+			SelectElement(localStorage.getItem('animal'))
+		}
+	}
+	else{
+		console.log('No local storage');
+	} */
+	
+	console.log('mouseX ',mouseX);
+		
 
 	}
 	
+	function SelectElement(valueToSelect){    
+		var element =document.getElementById('animals');
+		element.value = valueToSelect;
 	
+		if ("createEvent" in document) {
+			var evt = document.createEvent("HTMLEvents");
+			evt.initEvent("change", false, true);
+			element.dispatchEvent(evt);
+		}
+		else{
+		element.fireEvent("onchange");
+		}
+	}
+	
+	
+	function createSelect(elementID,dataArray){
+		console.log('createSelect called');
+		var optionNode;
+		var optionTextnode;
+	
+		selectEle = document.createElement("select");
+		selectEle.setAttribute("id",elementID); 
+		form.appendChild(selectEle);	//Append select node
+	
+	
+
+		for (var i=0;i<dataArray.length;i++){
+		    optionNode = document.createElement("option");
+		    optionTextnode = document.createTextNode(dataArray[i]);
+			optionNode.appendChild(optionTextnode);
+			selectEle.appendChild(optionNode);
+			
+		}
+		form.appendChild(selectEle);   //append options to select node
+		
+		return selectEle;
+	
+	}
+	
+	function setListener(ele,evt){
+		console.log(ele,evt);
+		var eleID;
+		ele.addEventListener(evt,function(){
+											//if(window.localStorage){
+												//localStorage.setItem("animal",animal.value);
+											//}
+											getData();
+											
+											
+											switch(ele.id){
+												case 'animals':
+													getBreeds();   //creating in different function as breed data is dynamically populated thru 'async' ajax and breed is not a select 
+													break;
+													
+												case 'breed':
+													 var ages=['Any','Baby','Young','Adult','Senior'];
+													 eleID='age';
+													 removeElement(age);
+													 removeElement(gender);
+													 age=createSelect(eleID,ages);
+													 setListener(age,'change');
+													 break;
+													 
+												case 'age':
+													var genders=['Any','Male','Female'];
+													eleID='gender';
+										            removeElement(gender);
+													gender=createSelect(eleID,genders);
+													setListener(gender,'change');													
+													break;
+													
+												default:
+													console.log('element id does not match ');
+											}
+											
+											//console.log(breeds);
+											//setBreedListener(animal);
+											});
+	
+
+	
+	
+	}
 
 	function setAnimalListener(){
 	animal=document.getElementById("animals");
-	document.getElementById("animals").addEventListener("change",function(){getData(animal),setBreedListener(animal)});
+	animal.addEventListener("change",function(){
+													if(window.localStorage){
+														localStorage.setItem("animal",animal.value);
+													}
+														getData(animal);
+														setBreedListener(animal)
+												});
 	
-	console.log('animal select change event added');
+
+	
+	//console.log('animal select change event added');
 	}
 	
+	function getBreeds(){
+	var URL='http://api.petfinder.com/breed.list?key='+apiKey+'&format=json&animal='+animal.value;
+	//console.log('breedURL'+URL);
+		$.ajax({                    															//Asyn ajax to API
+			type: 'get',
+			url: URL,
+			dataType: 'jsonp',
+			success: function(data)																//Callback function
+			{
+			    
+				breeds=data.petfinder.breeds.breed;
+				console.log('b',breeds,data.petfinder.breeds.breed);
+				
+				createBreed(); //calling  here due to asyn behaviour of ajax
+				 
+				
+			
+				
+			},
+			error: function( errorThrown)
+			{
+				console.log("Error making the request:"+errorThrown);
+			}
+		});
+			return breeds;
+	}
 	
-	function setBreedListener(animal){
+	function createBreed(){
 	
-			$.ajax({                    															//Asyn ajax to API
+			/* $.ajax({                    															//Asyn ajax to API
 			type: 'get',
 			url: 'http://api.petfinder.com/breed.list?key='+apiKey+'&format=json&animal='+animal.value,
 			dataType: 'jsonp',
 			success: function(data)																//Callback function
-			{
+			{ */
 			    var bindTo='breeds';
-				//console.log(data.petfinder.breeds.breed);
-				breeds=data.petfinder.breeds.breed;
+			
+				//breeds=data.petfinder.breeds.breed;
 				
 				
 				//console.log(breedSelect==null);
@@ -81,24 +224,24 @@ function Pets(){
 				removeElement(age);
 				removeElement(gender);
 				createBreedSelect();
-				console.log("breed select created");
+				//console.log("breed select created");
 				
 				}
 				breed=document.getElementById("breed");
 				bindData(bindTo);
 				
-				breed.addEventListener("input",function(){getData(animal,breed),setAgeListener(animal,breed);});
-				
-				},
+				//breed.addEventListener("input",function(){getData(),setAgeListener(animal,breed);});
+				setListener(breed,'input');
+/* 				},
 			error: function( errorThrown)
 			{
 				console.log("Error making the request:"+errorThrown);
 			}
-		});
+		}); */
 	}
 	
 	function removeElement(ele){
-	console.log(ele);
+	//console.log(ele);
 		if(ele!=undefined){  				//If element exist
 			ele.parentNode.removeChild(ele);
 			
@@ -116,7 +259,7 @@ function Pets(){
 		createAgeSelect();
 		}
 		
-		console.log('age select created');
+		//console.log('age select created');
 		age=document.getElementById('age');
 		age.addEventListener("change",function(){getData(animal,breed,age);setGenderListener(animal,breed,age)});
 	}
@@ -124,7 +267,7 @@ function Pets(){
 	function setGenderListener(animal,breed,age){
 		if(document.getElementById('gender')==null){
 			createGenderSelect();
-			console.log('gender select created');
+			//console.log('gender select created');
 			
 		}
 		else{
@@ -202,12 +345,17 @@ function Pets(){
 	
 	}
 	
-	function getData(animal,breed,age,gender){
+	function getData(){
+	animal=document.getElementById('animals');
+	breed=document.getElementById('breed');
+	age=document.getElementById('age');
+	gender=document.getElementById('gender');
+	
 	//clearBigImage();  //clears big image on every get data call;
 	var animalValue="",breedValue="",ageValue="",genderValue="",location=14623;
 	var URL='http://api.petfinder.com/pet.find?key='+apiKey+'&count=20&format=json&location='+location;  //basse URL
 	
-	console.log('getData called');
+	//console.log('getData called');
 	if(animal){
 	animalValue=animal.value;
 	}
@@ -307,7 +455,7 @@ function Pets(){
 	
 	imageListWidth=0;   //re initiliazzing every time new images are loaded
 	document.getElementById("imageList").innerHTML = "";
-	console.log('images cleared');
+	//console.log('images cleared');
 	var secondRow=false;
 	
 	
@@ -317,9 +465,9 @@ function Pets(){
 	
 	var imgSrc;
 	var imageList=document.getElementById('imageList');
-	console.log(baseData);
+	//console.log(baseData);
 		for(var i=0;i<length;i++){
-			console.log("is data"+baseData[i].media.photos);
+			//console.log("is data"+baseData[i].media.photos);
 			if(baseData[i].media.photos)
 			{
 			
@@ -342,12 +490,12 @@ function Pets(){
 		
 			}
 		}	
-	console.log(imageListWidth)	;
-	imageList.addEventListener('mouseover',function(){slideImages(event);});  //to make the images slide on mouse over
+	//console.log(imageListWidth)	;
+	imageList.addEventListener('mouseenter',function(){slideImages(event);},false);  //to make the images slide on mouse over
 												
 	
 	
-	console.log(document.getElementById("imageList").childNodes);
+	//console.log(document.getElementById("imageList").childNodes);
 	var imagesLength=document.getElementById("imageList").childNodes.length;
 	for(var i=0;i<imagesLength;i++){
 		document.getElementById("imageList").childNodes[i].addEventListener('click',function(){openDialogBox(this);});
@@ -357,26 +505,27 @@ function Pets(){
 	function slideImages(mouseEvent){   //@mouseEvent if event is fire by mouseMove instead of set time out
 	
 	
-	
+	var repeater=setTimeout(slideImages,40);
 	var imgLeft=parseInt(getComputedStyle(imageList).getPropertyValue("left"));
 	var bufferEnd=30;  //to show the images have ended
 	
 	
 	
-	if(mouseEvent){
-		if(mouseEvent.clientX>(screenWidth/2)){  //mouse on the right side of the screen
+	//console.log('mouseXX',mouseXX);
+	   
+		if(mouseXX>(screenWidth/2)){  //mouse on the right side of the screen
 		slideDirection="left";
-		slideSpeed=(mouseEvent.clientX-(screenWidth/2))*0.023;
+		slideSpeed=(mouseXX-(screenWidth/2))*0.023;
 		}
 		else
 		{
 		slideDirection="right";
-		slideSpeed=((screenWidth/2)-mouseEvent.clientX)*0.023;  
+		slideSpeed=((screenWidth/2)-mouseXX)*0.023;  
 		}
-	}
+	
 	
 	   if(slideDirection==="left"){ //slide Left
-	   console.log(imgLeft+">("+screenWidth+"-"+imageListWidth+")-"+bufferEnd);
+	   //console.log(imgLeft+">("+screenWidth+"-"+imageListWidth+")-"+bufferEnd);
 			if(imgLeft>(screenWidth-imageListWidth)-bufferEnd){  //to stop the slide when last image is slided
 			imgLeft=imgLeft-slideSpeed;
 			}
@@ -391,12 +540,12 @@ function Pets(){
 		
 		
 		
-		var repeater=setTimeout(slideImages,40);
 		
-			document.getElementById("imageList").addEventListener("mouseout",function(){   //clear timeOut counter on mouseOut event on the box
+		
+			document.getElementById("imageList").addEventListener("mouseleave",function(){   //clear timeOut counter on mouseOut event on the box
 					//petImages.style.left=imgLeft+'px';
 					clearTimeout(repeater);
-					
+					//console.log('clearTImer');
 					
 					});
 					

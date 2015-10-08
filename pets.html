@@ -11,17 +11,17 @@
 	</head>
 	<body >
 	<form id='petForm'>
-		<select id='animals' >
+		<!--<select id='animals' >
 			<option value="" disabled="disabled" selected="selected">Please select animal</option>
-			<option>barnyard</option>
-			<option>bird</option>
-			<option>cat</option>
-			<option>dog</option>
-			<option>horse</option>
-			<option>pig</option>
-			<option>reptile</option>
-			<option>smallfurry</option>
-		</select>
+			<option value='barnyard'>barnyard</option>
+			<option value='bird'>bird</option>
+			<option value='cat'>cat</option>
+			<option value='dog'>dog</option>
+			<option value='horse'>horse</option>
+			<option value='pig'>pig</option>
+			<option value='repltile'>reptile</option>
+			<option value='smallfurry'>smallfurry</option>
+		</select>-->
 		
 		
 		
@@ -37,7 +37,27 @@
 	
 	-->
 	<dialog id="petDialog">
-		<img  alt="pets!" onclick="doit(this)" id="big-pic" >
+		<div id='dialogInfo'>
+			<img  alt="pets!"  id="big-pic" >
+			<form class="contact_form" action="" method="post" name="contact_form" >
+				<ul>
+				    
+					
+					<li>
+						
+						<input type="text" name="user" placeholder="Name">
+					</li>
+					<li>
+						
+						<input type="email" name="password" placeholder="Email">
+					</li>
+					<li>
+						
+						<textarea name="message" cols="40" rows="6" placeholder="message" ></textArea>
+					</li>
+				</ul>
+			</form>			
+		</div>	
 		<div id="desc" >
 		</div>
 	</dialog>
