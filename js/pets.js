@@ -114,7 +114,7 @@ function Pets(){
 
 	
 	function createSelect(elementID,dataArray){
-		console.log('createSelect called');
+	
 		var optionNode;
 		var optionTextnode;
 	
@@ -144,7 +144,7 @@ function Pets(){
 	}
 	
 	function setListener(ele,evt){
-		console.log(ele,evt);
+		
 		
 		ele.addEventListener(evt,function(){
 											firstLoad=false; // to check if to use locally stored variable or not 
@@ -176,7 +176,7 @@ function Pets(){
 														localStorage.removeItem("age");
 														localStorage.removeItem("gender");
 													 }
-													 getData();
+													getData();
 													 break;
 													 
 												case ageID:
@@ -203,8 +203,7 @@ function Pets(){
 													console.log('ele id does not match ');
 											}
 											
-											//console.log(breeds);
-											//setBreedListener(animal);
+											
 											});
 	
 
@@ -229,7 +228,7 @@ function Pets(){
 			{
 			    
 				breeds=data.petfinder.breeds.breed;
-				console.log('b',breeds,data.petfinder.breeds.breed);
+				
 				
 				createBreed(); //calling  here due to asyn behaviour of ajax
 				 
@@ -294,7 +293,7 @@ function Pets(){
 	
 	function removeElement(ele){
 	
-	//console.log(ele);
+	
 		if(ele!=undefined){  				//If element exist
 			ele.parentNode.removeChild(ele);
 			
