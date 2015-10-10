@@ -10,6 +10,10 @@
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	</head>
 	<body >
+	<div id='Greeting'>
+		<h3 id='helloUsr'>Hello User!</h3>
+	</div>
+	
 	<form id='petForm'>
 		
 	</form>
@@ -17,17 +21,22 @@
 	<dialog id="petDialog">
 		<div id='dialogInfo'>
 			<img  alt="pets!"  id="big-pic" >
-			<form class="contact_form" action="" method="post" name="contact_form" >
+			<form  id='contactForm' class="contact_form" action="" method="post" name="contact_form" >
 				<ul>
 				    <li>
-						<input type="text" name="user" placeholder="Name">
+						<input type="text" name="user" placeholder="Name" required>
 					</li>
 					<li>
-						<input type="email" name="password" placeholder="Email">
+						<input type="email" name="email" placeholder="Email" required>
+						
+						<span class="form_hint">Proper format "name@something.com"</span>
 					</li>
 					<li>
-						<textarea name="message" cols="40" rows="6" placeholder="message" ></textArea>
+						<textarea type="text" name="message" cols="40" rows="6" placeholder="message" required ></textArea>
 					</li>
+					<li>
+						<button class="submit"  type="submit">Contact us</button> 
+					</li>		
 				</ul>
 			</form>			
 		</div>	
@@ -44,6 +53,7 @@
 		
 	<!--External Javascript files-->
 	<script type="text/javascript" src="js/global.js"></script>
+
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="js/pets.js"></script>
 	<script type="text/javascript" src="js/browserDetect.js"></script>	

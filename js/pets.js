@@ -8,6 +8,8 @@ function Pets(){
 	
 	var form;     //form element
 	
+	var dialogBox; //modal dialog
+	
 	//select Boxes
 	var animal;  //animalInput 
 	var breed;    //breed input 
@@ -40,6 +42,8 @@ function Pets(){
 	//Local storage variable
 	var firstLoad=true;
 	
+	//Cookie variable
+	var username;
 	
 	
 	var descBoxHeight;
@@ -55,6 +59,8 @@ function Pets(){
 		apiSecret='80b43503a72be11d8ca49341f152761c';
 		
 		form=document.getElementById("petForm");
+		dialogBox=document.getElementById("petDialog"); 
+		//clearGreeting();
 		
 		maxPets=50;
 		
@@ -72,7 +78,17 @@ function Pets(){
 		ageID='age';
 		genderID='gender';
 		breedListID='breeds';
+	
 		
+		
+		if(document.cookie){
+			
+		    
+            var helloUser=document.getElementById('helloUsr');
+		    username = document.cookie.split("=");
+			helloUser.innerHTML="Hello "+username[1]+"!"; 			
+			 
+		}
 		
 		animal=createSelect(animalID,animals);  //Creating first select
 		setListener(animal,'change');																								 //Created event listener to tht select	
@@ -150,7 +166,7 @@ function Pets(){
 											firstLoad=false; // to check if to use locally stored variable or not 
 											
 											
-											
+											clearGreeting();
 											switch(ele.id){
 												case animalID:
 
@@ -493,7 +509,7 @@ function Pets(){
 	function openDialogBox(thumb){
 	
 	
-		dialogBox=document.getElementById("petDialog"); 
+		clearGreeting();
 		dialogBox.showModal();
 	
 		document.getElementById("big-pic").src=thumb.src;
@@ -533,24 +549,67 @@ function Pets(){
 	
 	
 	function bindData(bindTo){
-		switch(bindTo){
-		case 'breeds':
-			$('#breeds').find("option").remove();
-			var option = '<option value="Any">Any</option>';
-			for (var i=0;i<breeds.length;i++){
-				option += '<option value="'+ breeds[i].$t + '">' + breeds[i].$t + '</option>';
-			}
-			$('#breeds').append(option);
 		
-			break;
-	
-		default:
-		console.log("invalid bindTo parameter");
-		}
+		
+		var breedList=document.getElementById(breedListID);	
+		    while (breedList.firstChild) {  							//remove all options tag
+				breedList.removeChild(breedList.firstChild);
+			}
+			
+			var option=document.createElement('option');
+				option.setAttribute('value','Any');
+				var optionText=document.createTextNode('Any');
+				option.appendChild(optionText);
+				breedList.appendChild(option);
+			
+			for (var i=0;i<breeds.length;i++){
+				var option=document.createElement('option');
+				option.setAttribute('value',breeds[i].$t);
+				var optionText=document.createTextNode(breeds[i].$t);
+				option.appendChild(optionText);
+				breedList.appendChild(option);
+				
+			}
 	
 	}
 	
-
+    //Form Submisssion events
+	var contactForm=document.getElementById('contactForm');
+	contactForm.addEventListener('submit', function(event) { event.preventDefault();
+													console.log('submit done');
+													onFormSubmit();false});  //add form submission event
+	
+	function onFormSubmit(){
+		console.log('submitted');
+		
+		var formGreeting=document.getElementById('Greeting');
+		var submitInfo=document.createElement('p');
+		var submitInfoText=document.createTextNode('Thank you! Your inquiry has been sumitted ,expect an response on your email within 3 days')
+		formGreeting.appendChild(submitInfo);
+		submitInfo.appendChild(submitInfoText);
+		
+		
+		document.cookie="username="+document.getElementsByName('user')[0].value;
+		console.log(document.cookie);
+		var helloUser=document.getElementById('helloUsr');
+		username = document.cookie.split("=");
+		helloUser.innerHTML="Hello "+username[1]; 	
+		
+		dialogBox.close();
+		
+		return false;
+	
+	}
+	
+	function clearGreeting(){
+		var formGreeting=document.getElementById('Greeting');
+		
+	    if(formGreeting.childNodes[3]){
+			formGreeting.removeChild(formGreeting.childNodes[3]); //remove p tag child
+		}			
+				
+	
+	}
 	////////////////////////////////////////////////
 	// CONSTRUCT
 	////////////////////////////////////////////////

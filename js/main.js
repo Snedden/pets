@@ -5,11 +5,12 @@ window.onload = function(){
 								(this.BrowserDetect.browser==='Opera')&&((parseInt(this.BrowserDetect.version))>23)){   //Opera version 24 +
 							
 							
-							console.log(this);
-							this.addEventListener('mousemove',function (){mouseXX=event.clientX;mouseY=event.clientY});// mouseX and mouseY are define
+						
+							this.addEventListener('mousemove',function (){mouseXX=event.clientX;});                     // mouseX  defined
 							                     
 												 
-												petObj=new Pets();
+							petObj=new Pets();
+							console.log(petObj.animalID);
 												
 							}	
 							else{
