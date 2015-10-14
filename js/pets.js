@@ -133,8 +133,10 @@ function Pets(){
 	
 		var optionNode;
 		var optionTextnode;
-	
-		selectEle = document.createElement("select");
+		
+		
+	     
+		var selectEle = document.createElement("select");
 		selectEle.setAttribute("id",elementID); 
 		form.appendChild(selectEle);	//Append select node
 	
@@ -183,7 +185,6 @@ function Pets(){
 												case breedID:
 													 removeElement(age);
 													 removeElement(gender);
-													
 													 age=createSelect(ageID,ages);
 													 setListener(age,'change');
 													
@@ -199,6 +200,7 @@ function Pets(){
 													
 													
 										            removeElement(gender);
+													
 													gender=createSelect(genderID,genders);
 													setListener(gender,'change');	
 													if(window.localStorage){
@@ -257,6 +259,7 @@ function Pets(){
 			error: function( errorThrown)
 			{
 				console.log("Error making the request:"+errorThrown);
+				window.location.href="requestFailed.html";
 			}
 		});
 			
@@ -275,8 +278,14 @@ function Pets(){
 				}
 				else{            							  //If exist remove the existing breed input and create new one
 					removeElement(breed);
+					
+					
 					removeElement(age);
+					
+					
 					removeElement(gender);
+					
+				
 					createBreedSelect();
 				}
 				breed=document.getElementById(breedID);
@@ -293,6 +302,10 @@ function Pets(){
 	var breedSelect; 
 	var breedData; 		 //Breed datalist tag
 	
+	
+	
+
+	
 	breedSelect = document.createElement("input");
 	breedSelect.setAttribute("placeholder", "Any"); 
 	breedSelect.setAttribute("id", breedID); 
@@ -307,13 +320,14 @@ function Pets(){
 	
 	}
 	
-	function removeElement(ele){
+	function removeElement(ele,isID){
 	
 	
 		if(ele!=undefined){  				//If element exist
 			ele.parentNode.removeChild(ele);
 			
 		}
+		
 		
 	}
 	
@@ -370,6 +384,8 @@ function Pets(){
 	
 
 		URL='http://api.petfinder.com/pet.find?key='+apiKey+'&count='+maxPets+'&format=json&breed='+breedValue+'&animal='+animalValue+'&age='+ageValue+'&sex='+genderValue+'&location='+location;
+		
+		
 		$.ajax({                    															//Asyn ajax to API
 			type: 'get',
 			url:  URL,
@@ -385,9 +401,14 @@ function Pets(){
 			error: function( errorThrown)
 			{
 				console.log("Error making the request:"+errorThrown);
+				window.location.href="requestFailed.html";
 			}
 		});
 	}
+	
+	
+
+	
 	
 	function  formatPets(data){
 		baseData.length=0;
@@ -426,14 +447,23 @@ function Pets(){
 	function loadImages(){
 	
 		imageListWidth=0;   //re initiliazzing every time new images are loaded
-		document.getElementById("imageList").innerHTML = "";
+		
+		var imgSrc;
+		var imageList=document.getElementById('imageList');
+		imageList.innerHTML="";
 	
 		var secondRow=false;
 	
 		var length=baseData.length;
+		if(length===0){
+			var noPetMsg=document.createElement('p');
+			var noPetMsgText=document.createTextNode('Sorry no pets found for the above input near your location.');
+			noPetMsg.appendChild(noPetMsgText);
+			imageList.appendChild(noPetMsg);
+			return;
+		}
 	
-		var imgSrc;
-		var imageList=document.getElementById('imageList');
+		
 	
 		for(var i=0;i<length;i++){
 			
@@ -511,6 +541,8 @@ function Pets(){
 	
 		clearGreeting();
 		dialogBox.showModal();
+		
+		
 	
 		document.getElementById("big-pic").src=thumb.src;
 	
@@ -592,8 +624,11 @@ function Pets(){
 		document.cookie="username="+document.getElementsByName('user')[0].value;
 		console.log(document.cookie);
 		var helloUser=document.getElementById('helloUsr');
+		
+		if(document.cookie){
 		username = document.cookie.split("=");
-		helloUser.innerHTML="Hello "+username[1]; 	
+			helloUser.innerHTML="Hello "+username[1]; 	
+		}	
 		
 		dialogBox.close();
 		
