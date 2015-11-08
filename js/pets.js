@@ -108,23 +108,23 @@ function Pets(){
 	
 	function createLocalStorageSelect(){
 		if(localStorage.getItem("breed")){
-				breed.value=localStorage.getItem("breed");
-				age=createSelect(ageID,ages);
-				setListener(age,'change');
+			breed.value=localStorage.getItem("breed");
+			age=createSelect(ageID,ages);
+			setListener(age,'change');
 				
-				if(localStorage.getItem("age")){
-					age.value=localStorage.getItem("age");
-					gender=createSelect(genderID,genders);
-					setListener(gender,'change');
+			if(localStorage.getItem("age")){
+				age.value=localStorage.getItem("age");
+				gender=createSelect(genderID,genders);
+				setListener(gender,'change');
 					
-					if(localStorage.getItem("gender")){
-						gender.value=localStorage.getItem("gender");
+				if(localStorage.getItem("gender")){
+					gender.value=localStorage.getItem("gender");
 						
 						
-				}
 				}
 			}
-			getData();
+		}
+		getData();
 	}
 	
 
@@ -299,25 +299,18 @@ function Pets(){
 	
 	function createBreedSelect(){
 	
-	var breedSelect; 
-	var breedData; 		 //Breed datalist tag
-	
-	
-	
-
-	
-	breedSelect = document.createElement("input");
-	breedSelect.setAttribute("placeholder", "Any"); 
-	breedSelect.setAttribute("id", breedID); 
-	breedSelect.setAttribute("list", breedListID); 
-	form.appendChild(breedSelect);
-	
-	          
-	breedData = document.createElement("datalist");
-	breedData.setAttribute("id", breedListID); 
-	form.appendChild(breedData);
-	
-	
+		var breedSelect; 
+		var breedData; 		 //Breed datalist tag
+		
+		breedSelect = document.createElement("input");
+		breedSelect.setAttribute("placeholder", "Any"); 
+		breedSelect.setAttribute("id", breedID); 
+		breedSelect.setAttribute("list", breedListID); 
+		form.appendChild(breedSelect);
+		
+		breedData = document.createElement("datalist");
+		breedData.setAttribute("id", breedListID); 
+		form.appendChild(breedData);
 	}
 	
 	function removeElement(ele,isID){
